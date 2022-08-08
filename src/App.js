@@ -1,25 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import PropTypes from 'prop-types'
+import styled from 'styled-components/macro'
+import Snake from './Content/Snake'
 
-function App() {
+const App = props => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={props.className}>
+      <Snake />
     </div>
-  );
+  )
 }
 
-export default App;
+App.propTypes = {
+  className: PropTypes.string,
+}
+
+export default styled(App)`
+  margin: 0 auto;
+  height: 100%;
+`
