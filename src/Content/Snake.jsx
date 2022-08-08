@@ -4,102 +4,174 @@ import styled from 'styled-components/macro'
 
 const Snake = props => {
   const ref = useRef(null)
-  const [active, setActive] = useState(false)
-  const [position, setPosition] = useState(16)
+  const [snakeHeadPosition, setSnakeHeadPosition] = useState(17)
+  const [snakeEndPosition, setSnakeEndPosition] = useState(16)
   const [keyDirection, setKeyDirection] = useState('')
+  const [snakeLength, setSnakeLength] = useState(2)
+
+  const [snakePosition, setSnakePosition] = useState([16,17])
+
   function Click(e) {
     console.log(e.target)
     e.target.style.backgroundColor = 'red'
   }
 
+  
+// Попробовать по нажатию кнопки записать направление в Стейт (Пример: Right) и это в ивенте, А в сеттаймаунте уже делать нужное действие в зависимости от стейта. 
   function keyDown(e) {
     console.log(ref.current.children)
     let length = ref.current.children.length
-    const insideLength = ref.current.children[0].children.length
-    const horizontalLine = position / insideLength > Math.floor(position / insideLength) ? Math.floor(position / insideLength) : position / insideLength - 1
-    const verticalLine = getVerticalLinePosition(horizontalLine, length, position)
-
+    const innerLength = ref.current.children[0].children.length
+    const horizontalLine = snakeHeadPosition / innerLength > Math.floor(snakeHeadPosition / innerLength) ? Math.floor(snakeHeadPosition / innerLength) : snakeHeadPosition / innerLength - 1
+    const verticalLine = getVerticalLinePosition(horizontalLine, length, snakeHeadPosition)
+    const copySnakePosition = snakePosition.slice()
     if (e.code === 'ArrowUp') {
-      if (ref.current.children[0].children[verticalLine].innerText == position) {
-        ref.current.children[length-1].children[verticalLine].style.backgroundColor = 'red'
-        ref.current.children[0].children[verticalLine].style.backgroundColor = '#fff'
-        setPosition(position => position + (length * insideLength - length))
+      if (innerLength - (innerLength - (verticalLine + 1)) === copySnakePosition.at(-1)) {
+        copySnakePosition.shift()
+        copySnakePosition.push(copySnakePosition.at(-1) + (length * innerLength - length))
+        setSnakeHeadPosition(copySnakePosition.at(-1))
+        setSnakePosition(copySnakePosition)
         return
+      }
+      
+      copySnakePosition.shift()
+      copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
+      setSnakeHeadPosition(copySnakePosition.at(-1))
+      setSnakePosition(copySnakePosition)
+      // if (ref.current.children[0].children[verticalLine].innerText == snakeHeadPosition) {
+      //   ref.current.children[length-1].children[verticalLine].style.backgroundColor = 'red'
+      //   ref.current.children[0].children[verticalLine].style.backgroundColor = '#fff'
+      //   setSnakeHeadPosition(position => position + (length * insideLength - length))
+      //   return
         
-      }
-      for (let i = 0; i < length; i++) {
-        if (ref.current.children[i].children[verticalLine].innerText == position) {
-          ref.current.children[i].children[verticalLine].style.backgroundColor = '#fff'
-        }
+      // }
+      // for (let i = 0; i < length; i++) {
+      //   if (ref.current.children[i].children[verticalLine].innerText == snakeHeadPosition) {
+      //     ref.current.children[i].children[verticalLine].style.backgroundColor = '#fff'
+      //   }
 
-        if (ref.current.children[i].children[verticalLine].innerText == position - insideLength) {
-          ref.current.children[i].children[verticalLine].style.backgroundColor = 'red'
-        }
-      }
-      setPosition(position => position - insideLength)
+      //   if (ref.current.children[i].children[verticalLine].innerText == snakeHeadPosition - insideLength) {
+      //     ref.current.children[i].children[verticalLine].style.backgroundColor = 'red'
+      //   }
+      // }
+      // setSnakeHeadPosition(position => position - insideLength)
     }
 
     if (e.code === 'ArrowDown') {
-      if (ref.current.children[length-1].children[verticalLine].innerText == position) {
-        ref.current.children[0].children[verticalLine].style.backgroundColor = 'red'
-        ref.current.children[length-1].children[verticalLine].style.backgroundColor = '#fff'
-        setPosition(position => position - (length * insideLength - length))
+      if (length * innerLength - (innerLength - (verticalLine + 1))  === copySnakePosition.at(-1)) {
+        copySnakePosition.shift()
+        copySnakePosition.push(copySnakePosition.at(-1) - (length * innerLength - length))
+        setSnakeHeadPosition(copySnakePosition.at(-1))
+        setSnakePosition(copySnakePosition)
         return
+      }
+      
+      copySnakePosition.shift()
+      copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
+      setSnakeHeadPosition(copySnakePosition.at(-1))
+      setSnakePosition(copySnakePosition)
+      // if (ref.current.children[length-1].children[verticalLine].innerText == snakeHeadPosition) {
+      //   ref.current.children[0].children[verticalLine].style.backgroundColor = 'red'
+      //   ref.current.children[length-1].children[verticalLine].style.backgroundColor = '#fff'
+      //   setSnakeHeadPosition(position => position - (length * insideLength - length))
+      //   return
         
-      }
-      for (let i = 0; i < length; i++) {
-        if (ref.current.children[i].children[verticalLine].innerText == position) {
-          ref.current.children[i].children[verticalLine].style.backgroundColor = '#fff'
-        }
+      // }
+      // for (let i = 0; i < length; i++) {
+      //   if (ref.current.children[i].children[verticalLine].innerText == snakeHeadPosition) {
+      //     ref.current.children[i].children[verticalLine].style.backgroundColor = '#fff'
+      //   }
 
-        if (ref.current.children[i].children[verticalLine].innerText == position + 5) {
-          ref.current.children[i].children[verticalLine].style.backgroundColor = 'red'
-        }
-      }
-      setPosition(position => position + insideLength)
+      //   if (ref.current.children[i].children[verticalLine].innerText == snakeHeadPosition + 5) {
+      //     ref.current.children[i].children[verticalLine].style.backgroundColor = 'red'
+      //   }
+      // }
+      // setSnakeHeadPosition(position => position + insideLength)
     }
 
     if (e.code === 'ArrowLeft') {
-      if (ref.current.children[horizontalLine].children[0].innerText == position) {
-        ref.current.children[horizontalLine].children[4].style.backgroundColor = 'red'
-        ref.current.children[horizontalLine].children[0].style.backgroundColor = '#fff'
-        setPosition(position => position + insideLength - 1)
+      if ((horizontalLine + 1) * innerLength - innerLength + 1 === copySnakePosition.at(-1)) {
+        copySnakePosition.shift()
+        copySnakePosition.push(copySnakePosition.at(-1) + innerLength - 1)
+        setSnakeHeadPosition(copySnakePosition.at(-1))
+        setSnakePosition(copySnakePosition)
         return
       }
-      for (let i = 0; i < insideLength; i++) {
-        if (ref.current.children[horizontalLine].children[i].innerText == position) {
-          ref.current.children[horizontalLine].children[i].style.backgroundColor = '#fff'
-        }
+      
+      copySnakePosition.shift()
+      copySnakePosition.push(copySnakePosition.at(-1) - 1)
+      setSnakeHeadPosition(copySnakePosition.at(-1))
+      setSnakePosition(copySnakePosition)
 
-        if (ref.current.children[horizontalLine].children[i].innerText == position - 1) {
-          ref.current.children[horizontalLine].children[i].style.backgroundColor = 'red'
-        }
-      }
-      setPosition(position => position - 1)
+      // if (ref.current.children[horizontalLine].children[0].innerText == snakeHeadPosition) {
+      //   ref.current.children[horizontalLine].children[4].style.backgroundColor = 'red'
+      //   ref.current.children[horizontalLine].children[0].style.backgroundColor = '#fff'
+      //   setSnakeHeadPosition(position => position + insideLength - 1)
+      //   return
+      // }
+      // for (let i = 0; i < insideLength; i++) {
+      //   if (ref.current.children[horizontalLine].children[i].innerText == snakeHeadPosition) {
+      //     ref.current.children[horizontalLine].children[i].style.backgroundColor = '#fff'
+      //   }
+
+      //   if (ref.current.children[horizontalLine].children[i].innerText == snakeHeadPosition - 1) {
+      //     ref.current.children[horizontalLine].children[i].style.backgroundColor = 'red'
+      //   }
+      // }
+      // setSnakeHeadPosition(position => position - 1)
     }
 
     if (e.code === 'ArrowRight') {
-      console.log(' UUUUU  ArrowRight', position)
-
-      if (ref.current.children[horizontalLine].children[4].innerText == position) {
-        ref.current.children[horizontalLine].children[0].style.backgroundColor = 'red'
-        ref.current.children[horizontalLine].children[4].style.backgroundColor = '#fff'
-        setPosition(position => position - insideLength + 1)
+      if ((horizontalLine + 1) * innerLength === copySnakePosition.at(-1)) {
+        copySnakePosition.shift()
+        copySnakePosition.push(copySnakePosition.at(-1) - innerLength + 1)
+        setSnakeHeadPosition(copySnakePosition.at(-1))
+        setSnakePosition(copySnakePosition)
         return
       }
+      
+      copySnakePosition.shift()
+      copySnakePosition.push(copySnakePosition.at(-1) + 1)
+      setSnakeHeadPosition(copySnakePosition.at(-1))
+      setSnakePosition(copySnakePosition)
 
-      for (let i = 0; i < insideLength; i++) {
-        if (ref.current.children[horizontalLine].children[i].innerText == position) {
-          ref.current.children[horizontalLine].children[i].style.backgroundColor = '#fff'
-        }
+      // if (ref.current.children[horizontalLine].children[4].innerText == snakeHeadPosition) {
+      //   ref.current.children[horizontalLine].children[0].style.backgroundColor = 'red'
+      //   ref.current.children[horizontalLine].children[4].style.backgroundColor = '#fff'
+      //   setSnakeHeadPosition(position => position - insideLength + 1)
+      //   return
+      // }
 
-        if (ref.current.children[horizontalLine].children[i].innerText == position + 1) {
-          ref.current.children[horizontalLine].children[i].style.backgroundColor = 'red'
-        }
-      }
-      setPosition(position => position + 1)
+      // for (let i = 0; i < insideLength; i++) {
+      //   if (ref.current.children[horizontalLine].children[i].innerText == snakeHeadPosition) {
+      //     ref.current.children[horizontalLine].children[i].style.backgroundColor = '#fff'
+      //   }
+
+      //   if (ref.current.children[horizontalLine].children[i].innerText == snakeHeadPosition + 1) {
+      //     ref.current.children[horizontalLine].children[i].style.backgroundColor = 'red'
+      //   }
+      // }
+      // setSnakeHeadPosition(position => position + 1)
     }
   }
+
+  // function keyDown(e) {
+  //   if (e.code === 'ArrowUp') {
+  //     setKeyDirection('Up')
+  //   }
+
+  //   if (e.code === 'ArrowDown') {
+  //     setKeyDirection('Down')
+  //   }
+
+  //   if (e.code === 'ArrowLeft') {
+  //     setKeyDirection('Left')
+  //   }
+
+  //   if (e.code === 'ArrowRight') {
+  //     setKeyDirection('Right')
+  //   }
+  // }
 
   function getVerticalLinePosition(horizontalLine, length, position) {
     const number = (horizontalLine + 1) * length - position
@@ -134,45 +206,49 @@ const Snake = props => {
   //   }, 1000)
   //   return () => clearInterval(intervalId)
   // }, [])
+
+  function isSnakePosition() {
+    return snakePosition.includes()
+  }
   return (
     <div className={props.className}>
       <Container>
         <Table  >
           <tbody onClick={e => Click(e)} ref={ref}>
             <TR>
-              <TD>1</TD>
-              <TD>2</TD>
-              <TD>3</TD>
-              <TD>4</TD>
-              <TD>5</TD>
+              <TD snakePosition={snakePosition} pos={1}>1</TD>
+              <TD snakePosition={snakePosition} pos={2}>2</TD>
+              <TD snakePosition={snakePosition} pos={3}>3</TD>
+              <TD snakePosition={snakePosition} pos={4}>4</TD>
+              <TD snakePosition={snakePosition} pos={5}>5</TD>
             </TR>
             <TR>
-              <TD>6</TD>
-              <TD>7</TD>
-              <TD>8</TD>
-              <TD>9</TD>
-              <TD>10</TD>
+              <TD snakePosition={snakePosition} pos={6}>6</TD>
+              <TD snakePosition={snakePosition} pos={7}>7</TD>
+              <TD snakePosition={snakePosition} pos={8}>8</TD>
+              <TD snakePosition={snakePosition} pos={9}>9</TD>
+              <TD snakePosition={snakePosition} pos={10}>10</TD>
             </TR>
             <TR>
-              <TD>11</TD>
-              <TD>12</TD>
-              <TD>13</TD>
-              <TD>14</TD>
-              <TD>15</TD>
+              <TD snakePosition={snakePosition} pos={11}>11</TD>
+              <TD snakePosition={snakePosition} pos={12}>12</TD>
+              <TD snakePosition={snakePosition} pos={13}>13</TD>
+              <TD snakePosition={snakePosition} pos={14}>14</TD>
+              <TD snakePosition={snakePosition} pos={15}>15</TD>
             </TR>
             <TR>
-              <TD active={true}>16</TD>
-              <TD>17</TD>
-              <TD>18</TD>
-              <TD>19</TD>
-              <TD>20</TD>
+              <TD snakePosition={snakePosition} pos={16}>16</TD>
+              <TD snakePosition={snakePosition} pos={17}>17</TD>
+              <TD snakePosition={snakePosition} pos={18}>18</TD>
+              <TD snakePosition={snakePosition} pos={19}>19</TD>
+              <TD snakePosition={snakePosition} pos={20}>20</TD>
             </TR>
             <TR>
-              <TD>21</TD>
-              <TD>22</TD>
-              <TD>23</TD>
-              <TD>24</TD>
-              <TD>25</TD>
+              <TD snakePosition={snakePosition} pos={21}>21</TD>
+              <TD snakePosition={snakePosition} pos={22}>22</TD>
+              <TD snakePosition={snakePosition} pos={23}>23</TD>
+              <TD snakePosition={snakePosition} pos={24}>24</TD>
+              <TD snakePosition={snakePosition} pos={25}>25</TD>
             </TR>
           </tbody>
         </Table>
@@ -196,9 +272,8 @@ const TR = styled.tr`
 const TD = styled.td`
   width: 50px;
   height: 50px;
-  background-color: ${props => props.active ? 'red' : '#fff'};
+  background-color: ${props => props.snakePosition.includes(props.pos) ? 'red' : '#fff'};
 `
-
 
 const Container = styled.div`
   width: 700px;
