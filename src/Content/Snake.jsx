@@ -6,93 +6,116 @@ const Snake = props => {
   const ref = useRef(null)
   const [snakeHeadPosition, setSnakeHeadPosition] = useState(17)
   const [snakeEndPosition, setSnakeEndPosition] = useState(16)
-  const [keyDirection, setKeyDirection] = useState('')
+  const [delay, setDelay] = useState(500)
   const [foodPosition, setFoodPosition] = useState(4)
   const [snakePosition, setSnakePosition] = useState([16,17])
+  const direction = useRef('Right')
 
   useEffect(() => {
     let pos = 0
     while (pos === 0 || snakePosition.includes(pos)) {
       pos = Math.round(Math.random() * 25)
     }
+    if (snakePosition.length === 15) {
+      setDelay(300)
+    } else if (snakePosition.length === 7) {
+      setDelay(400)
+    }
     setFoodPosition(pos)
   }, [snakePosition.length])
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      move()
+    }, delay)
+    return () => clearInterval(intervalId)
+  })
+
   function keyDown(e) {
+    if (e.code === 'ArrowUp') {
+      if (direction.current === 'Down') return
+      direction.current = 'Up'
+      move('ArrowUp')
+    }
+
+    if (e.code === 'ArrowDown') {
+      if (direction.current === 'Up') return
+      direction.current = 'Down'
+      move()
+    }
+
+    if (e.code === 'ArrowLeft') {
+      if (direction.current === 'Right') return
+      direction.current = 'Left'
+      move()
+    }
+
+    if (e.code === 'ArrowRight') {
+      if (direction.current === 'Left') return
+      direction.current = 'Right'
+      move()
+    }
+  }
+
+  function move() {
     let length = ref.current.children.length
     const innerLength = ref.current.children[0].children.length
     const horizontalLine = snakeHeadPosition / innerLength > Math.floor(snakeHeadPosition / innerLength) ? Math.floor(snakeHeadPosition / innerLength) : snakeHeadPosition / innerLength - 1
     const verticalLine = getVerticalLinePosition(horizontalLine, length, snakeHeadPosition)
     const copySnakePosition = snakePosition.slice()
-
-    if (e.code === 'ArrowUp') {
-      if (innerLength - (innerLength - (verticalLine + 1)) === copySnakePosition.at(-1)) {
-        copySnakePosition.shift()
-        copySnakePosition.push(copySnakePosition.at(-1) + (length * innerLength - length))
-      } else if (copySnakePosition.at(-1) - innerLength === foodPosition) {
-        copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
-      } else {
-        copySnakePosition.shift()
-        copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
+    switch (direction.current) {
+      case 'Up': {
+        if (innerLength - (innerLength - (verticalLine + 1)) === copySnakePosition.at(-1)) {
+          copySnakePosition.shift()
+          copySnakePosition.push(copySnakePosition.at(-1) + (length * innerLength - length))
+        } else if (copySnakePosition.at(-1) - innerLength === foodPosition) {
+          copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
+        } else {
+          copySnakePosition.shift()
+          copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
+        }
+        break
       }
-    }
-
-    if (e.code === 'ArrowDown') {
-      if (length * innerLength - (innerLength - (verticalLine + 1))  === copySnakePosition.at(-1)) {
-        copySnakePosition.shift()
-        copySnakePosition.push(copySnakePosition.at(-1) - (length * innerLength - length))
-      } else if (copySnakePosition.at(-1) + innerLength === foodPosition) {
-        copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
-      } else {
-        copySnakePosition.shift()
-        copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
+      case 'Down':{
+        if (length * innerLength - (innerLength - (verticalLine + 1))  === copySnakePosition.at(-1)) {
+          copySnakePosition.shift()
+          copySnakePosition.push(copySnakePosition.at(-1) - (length * innerLength - length))
+        } else if (copySnakePosition.at(-1) + innerLength === foodPosition) {
+          copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
+        } else {
+          copySnakePosition.shift()
+          copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
+        }
+        break
       }
-    }
-
-    if (e.code === 'ArrowLeft') {
-      if ((horizontalLine + 1) * innerLength - innerLength + 1 === copySnakePosition.at(-1)) {
-        copySnakePosition.shift()
-        copySnakePosition.push(copySnakePosition.at(-1) + innerLength - 1)
-      } else if (copySnakePosition.at(-1) - 1 === foodPosition) {
-        copySnakePosition.push(copySnakePosition.at(-1) - 1)
-      } else {
-        copySnakePosition.shift()
-        copySnakePosition.push(copySnakePosition.at(-1) - 1)
+      case 'Left':{
+        if ((horizontalLine + 1) * innerLength - innerLength + 1 === copySnakePosition.at(-1)) {
+          copySnakePosition.shift()
+          copySnakePosition.push(copySnakePosition.at(-1) + innerLength - 1)
+        } else if (copySnakePosition.at(-1) - 1 === foodPosition) {
+          copySnakePosition.push(copySnakePosition.at(-1) - 1)
+        } else {
+          copySnakePosition.shift()
+          copySnakePosition.push(copySnakePosition.at(-1) - 1)
+        }
+        break
       }
-    }
-
-    if (e.code === 'ArrowRight') {
-      if ((horizontalLine + 1) * innerLength === copySnakePosition.at(-1)) {
-        copySnakePosition.shift()
-        copySnakePosition.push(copySnakePosition.at(-1) - innerLength + 1)
-      } else if (copySnakePosition.at(-1) + 1 === foodPosition) {
+      case 'Right':{
+        if ((horizontalLine + 1) * innerLength === copySnakePosition.at(-1)) {
+          copySnakePosition.shift()
+          copySnakePosition.push(copySnakePosition.at(-1) - innerLength + 1)
+        } else if (copySnakePosition.at(-1) + 1 === foodPosition) {
+            copySnakePosition.push(copySnakePosition.at(-1) + 1)
+        } else {
+          copySnakePosition.shift()
           copySnakePosition.push(copySnakePosition.at(-1) + 1)
-      } else {
-        copySnakePosition.shift()
-        copySnakePosition.push(copySnakePosition.at(-1) + 1)
+        }
+        break
       }
     }
     setSnakeHeadPosition(copySnakePosition.at(-1))
     setSnakePosition(copySnakePosition)
   }
-
-  // function keyDown(e) {
-  //   if (e.code === 'ArrowUp') {
-  //     setKeyDirection('Up')
-  //   }
-
-  //   if (e.code === 'ArrowDown') {
-  //     setKeyDirection('Down')
-  //   }
-
-  //   if (e.code === 'ArrowLeft') {
-  //     setKeyDirection('Left')
-  //   }
-
-  //   if (e.code === 'ArrowRight') {
-  //     setKeyDirection('Right')
-  //   }
-  // }
 
   function getVerticalLinePosition(horizontalLine, length, position) {
     const number = (horizontalLine + 1) * length - position
@@ -119,18 +142,8 @@ const Snake = props => {
     window.addEventListener('keydown', keyDown)
 
     return () => window.removeEventListener('keydown', keyDown)
-  }, )
+  })
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     console.log(1)
-  //   }, 1000)
-  //   return () => clearInterval(intervalId)
-  // }, [])
-
-  function isSnakePosition() {
-    return snakePosition.includes()
-  }
   return (
     <div className={props.className}>
       <Container>
