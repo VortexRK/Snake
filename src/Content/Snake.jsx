@@ -1,13 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components/macro'
+import Congrats from './Congrats'
 
 const Snake = props => {
   const ref = useRef(null)
   const [snakeHeadPosition, setSnakeHeadPosition] = useState(17)
-  const [snakeEndPosition, setSnakeEndPosition] = useState(16)
+  const [isLose, setIsLose] = useState(false)
   const [delay, setDelay] = useState(500)
-  const [foodPosition, setFoodPosition] = useState(4)
+  const [foodPosition, setFoodPosition] = useState(0)
   const [snakePosition, setSnakePosition] = useState([16,17])
   const direction = useRef('Right')
 
@@ -28,7 +29,20 @@ const Snake = props => {
     const intervalId = setInterval(() => {
       move()
     }, delay)
+    if (isLose) clearInterval(intervalId)
     return () => clearInterval(intervalId)
+  })
+
+  useEffect(() => {
+    if (snakePosition.slice(0, snakePosition.length - 1).includes(snakeHeadPosition)) {
+      setIsLose(true)
+    }
+  })
+
+  useEffect(() => {
+    window.addEventListener('keydown', keyDown)
+
+    return () => window.removeEventListener('keydown', keyDown)
   })
 
   function keyDown(e) {
@@ -66,8 +80,12 @@ const Snake = props => {
     switch (direction.current) {
       case 'Up': {
         if (innerLength - (innerLength - (verticalLine + 1)) === copySnakePosition.at(-1)) {
-          copySnakePosition.shift()
-          copySnakePosition.push(copySnakePosition.at(-1) + (length * innerLength - length))
+          if (copySnakePosition.at(-1) + (length * innerLength - length) === foodPosition) {
+            copySnakePosition.push(copySnakePosition.at(-1) + (length * innerLength - length))
+          } else {
+            copySnakePosition.shift()
+            copySnakePosition.push(copySnakePosition.at(-1) + (length * innerLength - length))
+          }
         } else if (copySnakePosition.at(-1) - innerLength === foodPosition) {
           copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
         } else {
@@ -78,8 +96,12 @@ const Snake = props => {
       }
       case 'Down':{
         if (length * innerLength - (innerLength - (verticalLine + 1))  === copySnakePosition.at(-1)) {
-          copySnakePosition.shift()
-          copySnakePosition.push(copySnakePosition.at(-1) - (length * innerLength - length))
+          if (copySnakePosition.at(-1) - (length * innerLength - length) === foodPosition) {
+            copySnakePosition.push(copySnakePosition.at(-1) - (length * innerLength - length))
+          } else {
+            copySnakePosition.shift()
+            copySnakePosition.push(copySnakePosition.at(-1) - (length * innerLength - length))
+          }
         } else if (copySnakePosition.at(-1) + innerLength === foodPosition) {
           copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
         } else {
@@ -90,8 +112,12 @@ const Snake = props => {
       }
       case 'Left':{
         if ((horizontalLine + 1) * innerLength - innerLength + 1 === copySnakePosition.at(-1)) {
-          copySnakePosition.shift()
-          copySnakePosition.push(copySnakePosition.at(-1) + innerLength - 1)
+          if (copySnakePosition.at(-1) + innerLength - 1 === foodPosition) {
+            copySnakePosition.push(copySnakePosition.at(-1) + innerLength - 1)
+          } else {
+            copySnakePosition.shift()
+            copySnakePosition.push(copySnakePosition.at(-1) + innerLength - 1)
+          }
         } else if (copySnakePosition.at(-1) - 1 === foodPosition) {
           copySnakePosition.push(copySnakePosition.at(-1) - 1)
         } else {
@@ -102,8 +128,12 @@ const Snake = props => {
       }
       case 'Right':{
         if ((horizontalLine + 1) * innerLength === copySnakePosition.at(-1)) {
-          copySnakePosition.shift()
-          copySnakePosition.push(copySnakePosition.at(-1) - innerLength + 1)
+          if (copySnakePosition.at(-1) - innerLength + 1 === foodPosition) {
+            copySnakePosition.push(copySnakePosition.at(-1) - innerLength + 1)
+          } else {
+            copySnakePosition.shift()
+            copySnakePosition.push(copySnakePosition.at(-1) - innerLength + 1)
+          }
         } else if (copySnakePosition.at(-1) + 1 === foodPosition) {
             copySnakePosition.push(copySnakePosition.at(-1) + 1)
         } else {
@@ -137,15 +167,22 @@ const Snake = props => {
       }
     }
   }
-
-  useEffect(() => {
-    window.addEventListener('keydown', keyDown)
-
-    return () => window.removeEventListener('keydown', keyDown)
-  })
+  
+  function reset() {
+    setSnakeHeadPosition(17)
+    setIsLose(false)
+    setDelay(500)
+    setFoodPosition(0)
+    setSnakePosition([16,17])
+    direction.current = 'Right'
+  }
 
   return (
     <div className={props.className}>
+      {isLose
+        ? <Congrats reset={reset}/>
+        : null
+      }
       <Container>
         <Table  >
           <tbody ref={ref}>
@@ -216,7 +253,9 @@ const Container = styled.div`
 `
 
 export default styled(Snake)`
+height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 `
