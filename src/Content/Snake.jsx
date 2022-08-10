@@ -7,66 +7,71 @@ const Snake = props => {
   const [snakeHeadPosition, setSnakeHeadPosition] = useState(17)
   const [snakeEndPosition, setSnakeEndPosition] = useState(16)
   const [keyDirection, setKeyDirection] = useState('')
-  const [snakeLength, setSnakeLength] = useState(2)
   const [foodPosition, setFoodPosition] = useState(4)
-
   const [snakePosition, setSnakePosition] = useState([16,17])
 
-useEffect(() => {
-  
-  let pos = 0
-  while (pos === 0 || snakePosition.includes(pos)) {
-    pos = Math.round(Math.random() * 25)
-  } 
-  console.log('foodPosition', pos)
-  setFoodPosition(pos)
-}, [snakeLength])
+  useEffect(() => {
+    let pos = 0
+    while (pos === 0 || snakePosition.includes(pos)) {
+      pos = Math.round(Math.random() * 25)
+    }
+    setFoodPosition(pos)
+  }, [snakePosition.length])
 
-useEffect(() => {
-  if (snakePosition.includes(foodPosition)) {
-    const helper = snakePosition.slice()
-    helper.unshift(snakeEndPosition)
-    setSnakePosition(helper)
-    setSnakeLength(length => length + 1)
-    setFoodPosition(0)
-  }
-}, [snakeEndPosition])
-
-// Попробовать по нажатию кнопки записать направление в Стейт (Пример: Right) и это в ивенте, А в сеттаймаунте уже делать нужное действие в зависимости от стейта.
   function keyDown(e) {
-    // console.log(ref.current.children)
-    // console.log('snakePosition', snakePosition)
     let length = ref.current.children.length
     const innerLength = ref.current.children[0].children.length
     const horizontalLine = snakeHeadPosition / innerLength > Math.floor(snakeHeadPosition / innerLength) ? Math.floor(snakeHeadPosition / innerLength) : snakeHeadPosition / innerLength - 1
     const verticalLine = getVerticalLinePosition(horizontalLine, length, snakeHeadPosition)
     const copySnakePosition = snakePosition.slice()
-    const endSnake = copySnakePosition.shift()
-    // console.log('endSnake', endSnake)
+
     if (e.code === 'ArrowUp') {
       if (innerLength - (innerLength - (verticalLine + 1)) === copySnakePosition.at(-1)) {
+        copySnakePosition.shift()
         copySnakePosition.push(copySnakePosition.at(-1) + (length * innerLength - length))
-      } else copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
+      } else if (copySnakePosition.at(-1) - innerLength === foodPosition) {
+        copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
+      } else {
+        copySnakePosition.shift()
+        copySnakePosition.push(copySnakePosition.at(-1) - innerLength)
+      }
     }
 
     if (e.code === 'ArrowDown') {
       if (length * innerLength - (innerLength - (verticalLine + 1))  === copySnakePosition.at(-1)) {
+        copySnakePosition.shift()
         copySnakePosition.push(copySnakePosition.at(-1) - (length * innerLength - length))
-      } else copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
+      } else if (copySnakePosition.at(-1) + innerLength === foodPosition) {
+        copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
+      } else {
+        copySnakePosition.shift()
+        copySnakePosition.push(copySnakePosition.at(-1) + innerLength)
+      }
     }
 
     if (e.code === 'ArrowLeft') {
       if ((horizontalLine + 1) * innerLength - innerLength + 1 === copySnakePosition.at(-1)) {
+        copySnakePosition.shift()
         copySnakePosition.push(copySnakePosition.at(-1) + innerLength - 1)
-      } else copySnakePosition.push(copySnakePosition.at(-1) - 1)
+      } else if (copySnakePosition.at(-1) - 1 === foodPosition) {
+        copySnakePosition.push(copySnakePosition.at(-1) - 1)
+      } else {
+        copySnakePosition.shift()
+        copySnakePosition.push(copySnakePosition.at(-1) - 1)
+      }
     }
 
     if (e.code === 'ArrowRight') {
       if ((horizontalLine + 1) * innerLength === copySnakePosition.at(-1)) {
+        copySnakePosition.shift()
         copySnakePosition.push(copySnakePosition.at(-1) - innerLength + 1)
-      } else copySnakePosition.push(copySnakePosition.at(-1) + 1)
+      } else if (copySnakePosition.at(-1) + 1 === foodPosition) {
+          copySnakePosition.push(copySnakePosition.at(-1) + 1)
+      } else {
+        copySnakePosition.shift()
+        copySnakePosition.push(copySnakePosition.at(-1) + 1)
+      }
     }
-    setSnakeEndPosition(endSnake)
     setSnakeHeadPosition(copySnakePosition.at(-1))
     setSnakePosition(copySnakePosition)
   }
