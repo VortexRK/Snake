@@ -5,7 +5,8 @@ import styled from 'styled-components'
 const Congrats = props => {
   return (
     <div className={props.className}>
-      <Text>Congratulation! You lose. Do you want try again?</Text>
+      <Text>Congratulation!The snake length is {props.length}</Text>
+      <Text>Do you want try again?</Text>
       <ButtonWrapper>
         <Button onClick={props.reset}>Yes</Button>
         <Button onClick={() => window.close()}>No</Button>
@@ -17,11 +18,14 @@ const Congrats = props => {
 Congrats.propTypes = {
   className: PropTypes.string,
   reset: PropTypes.func,
+  length: PropTypes.number,
 }
 
 const Text = styled.p`
   font-size: 16px;
   color: #000;
+  margin-top: 0px;
+  margin-bottom: 15px;
 `
 
 const ButtonWrapper = styled.div`

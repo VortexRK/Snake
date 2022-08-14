@@ -11,16 +11,33 @@ const Snake = props => {
   const [foodPosition, setFoodPosition] = useState(0)
   const [snakePosition, setSnakePosition] = useState([16,17])
   const direction = useRef('Right')
+  const fieldSize = useRef(15)
 
   useEffect(() => {
     let pos = 0
     while (pos === 0 || snakePosition.includes(pos)) {
-      pos = Math.round(Math.random() * 25)
+      pos = Math.round(Math.random() * (fieldSize.current*fieldSize.current))
     }
-    if (snakePosition.length === 15) {
-      setDelay(300)
-    } else if (snakePosition.length === 7) {
-      setDelay(400)
+
+    switch(snakePosition.length) {
+      case 5:
+        setDelay(400)
+        break
+      case 10:
+        setDelay(300)
+        break
+      case 15:
+        setDelay(250)
+        break
+      case 20:
+        setDelay(200)
+        break
+      case 25:
+        setDelay(150)
+        break
+      case 30:
+        setDelay(100)
+        break
     }
     setFoodPosition(pos)
   }, [snakePosition.length])
@@ -148,26 +165,12 @@ const Snake = props => {
   }
 
   function getVerticalLinePosition(horizontalLine, length, position) {
-    const number = (horizontalLine + 1) * length - position
-    switch (number) {
-      case 4: {
-        return 0
-      }
-      case 3: {
-        return 1
-      }
-      case 2: {
-        return 2
-      }
-      case 1: {
-        return 3
-      }
-      case 0: {
-        return 4
-      }
-    }
+    const firstNumberInLine = horizontalLine * length + 1
+    const lastNumberInLine = (horizontalLine + 1) * length
+    const verticalLine = (lastNumberInLine - firstNumberInLine) - (lastNumberInLine - position)
+    return verticalLine
   }
-  
+
   function reset() {
     setSnakeHeadPosition(17)
     setIsLose(false)
@@ -180,47 +183,15 @@ const Snake = props => {
   return (
     <div className={props.className}>
       {isLose
-        ? <Congrats reset={reset}/>
+        ? <Congrats reset={reset} length={snakePosition.length}/>
         : null
       }
       <Container>
         <Table  >
           <tbody ref={ref}>
-            <TR>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={1}>1</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={2}>2</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={3}>3</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={4}>4</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={5}>5</TD>
-            </TR>
-            <TR>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={6}>6</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={7}>7</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={8}>8</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={9}>9</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={10}>10</TD>
-            </TR>
-            <TR>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={11}>11</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={12}>12</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={13}>13</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={14}>14</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={15}>15</TD>
-            </TR>
-            <TR>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={16}>16</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={17}>17</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={18}>18</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={19}>19</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={20}>20</TD>
-            </TR>
-            <TR>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={21}>21</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={22}>22</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={23}>23</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={24}>24</TD>
-              <TD snakePosition={snakePosition} foodPosition={foodPosition} pos={25}>25</TD>
-            </TR>
+            {Array.from({length: fieldSize.current}, (tr, index) => <TR key={index}>
+              {Array.from({length: fieldSize.current}, (td, TdIndex) => <TD key={index * fieldSize.current + TdIndex} snakePosition={snakePosition} foodPosition={foodPosition} pos={index * fieldSize.current + TdIndex + 1}> {index * fieldSize.current + TdIndex + 1} </TD> )}
+            </TR>) }
           </tbody>
         </Table>
       </Container>
@@ -241,14 +212,13 @@ const TR = styled.tr`
 `
 
 const TD = styled.td`
-  width: 50px;
-  height: 50px;
+  width: 5px;
+  height: 5px;
   background-color: ${props => props.snakePosition.includes(props.pos) ? 'red' : props.foodPosition === props.pos ? 'yellow' : 'white'};
+  color: rgba(0,0,0,0);
 `
 
 const Container = styled.div`
-  width: 700px;
-  height: 700px;
   background-color: #006f83
 `
 
