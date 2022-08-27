@@ -5,7 +5,7 @@ import styled from 'styled-components'
 const Congrats = props => {
   return (
     <div className={props.className}>
-      <Text>Congratulation!The snake length is {props.length}</Text>
+      <Text>Congratulation! The snake length is {props.length}</Text>
       <Text>Do you want try again?</Text>
       <ButtonWrapper>
         <Button onClick={props.reset}>Yes</Button>
