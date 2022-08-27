@@ -85,7 +85,7 @@ const Snake = props => {
     const copySnakePosition = snakePosition.slice()
     switch (direction.current) {
       case 'Up': {
-        if (fieldSize - (fieldSize - (verticalLine + 1)) === copySnakePosition.at(-1)) {
+        if ((verticalLine + 1) === copySnakePosition.at(-1)) {
           if (copySnakePosition.at(-1) + (fieldSize * fieldSize - fieldSize) === foodPosition) {
             copySnakePosition.push(copySnakePosition.at(-1) + (fieldSize * fieldSize - fieldSize))
           } else {
@@ -100,7 +100,7 @@ const Snake = props => {
         }
         break
       }
-      case 'Down':{
+      case 'Down': {
         if (fieldSize * fieldSize - (fieldSize - (verticalLine + 1))  === copySnakePosition.at(-1)) {
           if (copySnakePosition.at(-1) - (fieldSize * fieldSize - fieldSize) === foodPosition) {
             copySnakePosition.push(copySnakePosition.at(-1) - (fieldSize * fieldSize - fieldSize))
@@ -116,8 +116,8 @@ const Snake = props => {
         }
         break
       }
-      case 'Left':{
-        if ((horizontalLine + 1) * fieldSize - fieldSize + 1 === copySnakePosition.at(-1)) {
+      case 'Left': {
+        if (horizontalLine * fieldSize + 1 === copySnakePosition.at(-1)) {
           if (copySnakePosition.at(-1) + fieldSize - 1 === foodPosition) {
             copySnakePosition.push(copySnakePosition.at(-1) + fieldSize - 1)
           } else {
@@ -132,7 +132,7 @@ const Snake = props => {
         }
         break
       }
-      case 'Right':{
+      case 'Right': {
         if ((horizontalLine + 1) * fieldSize === copySnakePosition.at(-1)) {
           if (copySnakePosition.at(-1) - fieldSize + 1 === foodPosition) {
             copySnakePosition.push(copySnakePosition.at(-1) - fieldSize + 1)
@@ -157,14 +157,14 @@ const Snake = props => {
 
   function getVerticalLinePosition(horizontalLine, length, position) {
     const firstNumberInLine = horizontalLine * length + 1
-    const lastNumberInLine = (horizontalLine + 1) * length
-    const verticalLine = (lastNumberInLine - firstNumberInLine) - (lastNumberInLine - position)
-    return verticalLine
+    // const lastNumberInLine = (horizontalLine + 1) * length
+    return position - firstNumberInLine
   }
 
   function reset() {
     setSnakeHeadPosition(2)
     setIsLose(false)
+
     switch(difficulty) {
       case 'Easy':
         setDelay(500)
@@ -247,6 +247,9 @@ const Snake = props => {
         case 20:
           setDelay(135)
           break
+        case 30:
+          setDelay(120)
+          break
         case 40:
           setDelay(100)
           break
@@ -259,9 +262,12 @@ const Snake = props => {
           setDelay(150)
           break
         case 7:
-          setDelay(100)
+          setDelay(125)
           break
         case 15:
+          setDelay(100)
+          break
+        case 20:
           setDelay(75)
           break
         case 25:
@@ -277,12 +283,12 @@ const Snake = props => {
     <div className={props.className}>
       <ControlsWrapper>
         <Wrapper>
-          <label name='size'>Введите размер игрового поля (5 - 25):&nbsp;</label>
+          <Label name='size'>Введите размер игрового поля (5 - 25):</Label>
           <Input type='text' name='size' placeholder={fieldSize} onChange={e => handleInput(e)}/>
           <Button type='button' onClick={handleClick} value='Ok'></Button>
         </Wrapper>
         <Wrapper>
-          <label name='difficulty'>Выберите уровень сложности:&nbsp;</label>
+          <Label name='difficulty'>Выберите уровень сложности:</Label>
           <Select name='difficulty' value={difficulty} onChange={e => handleSelect(e)}>
             <option value='Easy'>Easy</option>
             <option value='Medium'>Medium</option>
@@ -324,6 +330,10 @@ const Wrapper = styled.div`
   margin-bottom: 20px;
   justify-content: space-between;
   align-items: center;
+`
+
+const Label = styled.label`
+  margin-right: 10px;
 `
 
 const Select = styled.select`
