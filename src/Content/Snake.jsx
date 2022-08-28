@@ -283,13 +283,13 @@ const Snake = props => {
     <div className={props.className}>
       <ControlsWrapper>
         <Wrapper>
-          <Label name='size'>Введите размер игрового поля (5 - 25):</Label>
-          <Input type='text' name='size' placeholder={fieldSize} onChange={e => handleInput(e)}/>
+          <Label name='size'>Enter the size of the playing field (5 - 25):</Label>
+          <Input type='text' name='size' placeholder={fieldSize} onChange={handleInput}/>
           <Button type='button' onClick={handleClick} value='Ok'></Button>
         </Wrapper>
         <Wrapper>
-          <Label name='difficulty'>Выберите уровень сложности:</Label>
-          <Select name='difficulty' value={difficulty} onChange={e => handleSelect(e)}>
+          <Label name='difficulty'>Select difficulty level:</Label>
+          <Select name='difficulty' value={difficulty} onChange={handleSelect}>
             <option value='Easy'>Easy</option>
             <option value='Medium'>Medium</option>
             <option value='Hard'>Hard</option>
@@ -327,9 +327,12 @@ const ControlsWrapper = styled.div`
 
 const Wrapper = styled.div`
   display: flex;
-  margin-bottom: 20px;
   justify-content: space-between;
   align-items: center;
+
+  :first-child {
+    margin-bottom: 15px;
+  }
 `
 
 const Label = styled.label`

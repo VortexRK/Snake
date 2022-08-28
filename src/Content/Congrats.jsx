@@ -5,8 +5,8 @@ import styled from 'styled-components'
 const Congrats = props => {
   return (
     <div className={props.className}>
-      <Text>Congratulation! The snake length is {props.length}</Text>
-      <Text>Do you want try again?</Text>
+      <Text>Congratulation! The snake length is <b>{props.length}</b></Text>
+      <Text>Do you want to try again?</Text>
       <ButtonWrapper>
         <Button onClick={props.reset}>Yes</Button>
         <Button onClick={() => window.close()}>No</Button>
@@ -31,7 +31,6 @@ const Text = styled.p`
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-around;
-
 `
 
 const Button = styled.div`
@@ -46,9 +45,11 @@ const Button = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+
   :hover {
     background-color: #ebebeb;
   }
+
   :first-child {
     margin-right: 30px;
   }
