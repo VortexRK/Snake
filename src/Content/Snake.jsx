@@ -54,25 +54,26 @@ const Snake = props => {
   })
 
   function keyDown(e) {
-    if (e.code === 'ArrowUp') {
+    console.log('e.code', e.code)
+    if (e.code === 'ArrowUp' || e.code === 'KeyW') {
       if (direction.current === 'Down') return
       direction.current = 'Up'
       move()
     }
 
-    if (e.code === 'ArrowDown') {
+    if (e.code === 'ArrowDown' || e.code === 'KeyS') {
       if (direction.current === 'Up') return
       direction.current = 'Down'
       move()
     }
 
-    if (e.code === 'ArrowLeft') {
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
       if (direction.current === 'Right') return
       direction.current = 'Left'
       move()
     }
 
-    if (e.code === 'ArrowRight') {
+    if (e.code === 'ArrowRight'  || e.code === 'KeyD') {
       if (direction.current === 'Left') return
       direction.current = 'Right'
       move()
@@ -170,9 +171,12 @@ const Snake = props => {
         setDelay(500)
         break
       case 'Medium':
-        setDelay(300)
+        setDelay(350)
         break
       case 'Hard':
+        setDelay(250)
+        break
+      case 'Very Hard':
         setDelay(150)
         break
       default:
@@ -213,19 +217,16 @@ const Snake = props => {
           setDelay(500)
           break
         case 5:
-          setDelay(400)
+          setDelay(450)
           break
         case 10:
-          setDelay(300)
+          setDelay(400)
           break
         case 20:
-          setDelay(200)
+          setDelay(350)
           break
-        case 25:
-          setDelay(175)
-          break
-        case 40:
-          setDelay(150)
+        case 30:
+          setDelay(300)
           break
         default:
           break
@@ -233,25 +234,42 @@ const Snake = props => {
     } else if (difficulty === 'Medium') {
       switch(snakePosition.length) {
         case 2:
+          setDelay(350)
+          break
+        case 7:
           setDelay(300)
           break
-        case 5:
+        case 15:
+          setDelay(275)
+          break
+        case 22:
           setDelay(250)
           break
-        case 10:
+        case 30:
+          setDelay(225)
+          break
+        case 50:
           setDelay(200)
           break
+        default:
+          break
+      }
+    } else if (difficulty === 'Hard') {
+      switch(snakePosition.length) {
+        case 2:
+          setDelay(250)
+          break
+        case 7:
+          setDelay(225)
+          break
         case 15:
+          setDelay(200)
+          break
+        case 25:
           setDelay(175)
           break
-        case 20:
-          setDelay(135)
-          break
-        case 30:
-          setDelay(120)
-          break
-        case 40:
-          setDelay(100)
+        case 50:
+          setDelay(150)
           break
         default:
           break
@@ -267,11 +285,11 @@ const Snake = props => {
         case 15:
           setDelay(100)
           break
-        case 20:
+        case 25:
           setDelay(75)
           break
-        case 25:
-          setDelay(50)
+        case 40:
+          setDelay(60)
           break
         default:
           break
@@ -293,6 +311,7 @@ const Snake = props => {
             <option value='Easy'>Easy</option>
             <option value='Medium'>Medium</option>
             <option value='Hard'>Hard</option>
+            <option value='Very Hard'>Very Hard</option>
           </Select>
         </Wrapper>
       </ControlsWrapper>
@@ -304,7 +323,7 @@ const Snake = props => {
         <Table  >
           <tbody ref={ref}>
             {Array.from({length: fieldSize}, (tr, TrIndex) => <TR key={TrIndex}>
-              {Array.from({length: fieldSize}, (td, TdIndex) => <TD key={TrIndex * fieldSize + TdIndex} snakePosition={snakePosition} foodPosition={foodPosition} pos={TrIndex * fieldSize + TdIndex + 1} fieldSize={fieldSize}> {TrIndex * fieldSize + TdIndex + 1} </TD> )}
+              {Array.from({length: fieldSize}, (td, TdIndex) => <TD key={TrIndex * fieldSize + TdIndex} snakeHead={snakeHeadPosition} snakePosition={snakePosition} foodPosition={foodPosition} cellNumber={TrIndex * fieldSize + TdIndex + 1} fieldSize={fieldSize}> {TrIndex * fieldSize + TdIndex + 1} </TD> )}
             </TR> )}
           </tbody>
         </Table>
@@ -374,12 +393,12 @@ const TR = styled.tr`
 const TD = styled.td`
   width: ${props => props.fieldSize <=10 ? '40px' : '25px'};
   height: ${props => props.fieldSize <=10 ? '40px' : '25px'};
-  background-color: ${props => props.snakePosition.includes(props.pos) ? 'red' : props.foodPosition === props.pos ? 'yellow' : 'white'};
+  background-color: ${props => props.snakeHead === props.cellNumber ? '#c70000' : props.snakePosition.includes(props.cellNumber) ? '#ff0000' : props.foodPosition === props.cellNumber ? '#ffff00' : '#ffffff'};
   color: rgba(0,0,0,0);
 `
 
 const Container = styled.div`
-  background-color: #006f83
+  background-color: #006f83;
 `
 
 export default styled(Snake)`
@@ -389,4 +408,5 @@ export default styled(Snake)`
   justify-content: center;
   align-items: center;
   position: relative;
+  background-color: #e6e6e6;
 `
