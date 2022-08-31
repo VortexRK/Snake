@@ -54,7 +54,6 @@ const Snake = props => {
   })
 
   function keyDown(e) {
-    console.log('e.code', e.code)
     if (e.code === 'ArrowUp' || e.code === 'KeyW') {
       if (direction.current === 'Down') return
       direction.current = 'Up'
@@ -289,7 +288,7 @@ const Snake = props => {
           setDelay(75)
           break
         case 40:
-          setDelay(60)
+          setDelay(50)
           break
         default:
           break
